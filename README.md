@@ -47,21 +47,21 @@ erDiagram
         string email
     }
 
-    BALANCES {
+    BALANCE {
         int id
         int user_id
         float user_balance
     }
 
-    OPERATIONS {
+    OPERATION {
         int id
         int user_id
         int recipient
         float op_sum
     }
 
-    USERS ||--|| BALANCES : has
-    USERS }|--|{ OPERATIONS : participates
-    OPERATIONS ||--|{ BALANCES : affect
+    USERS ||--|| BALANCE : has
+    USERS }|--|{ OPERATION : participates
+    OPERATIONS ||--|{ BALANCE : affect
 
 ```

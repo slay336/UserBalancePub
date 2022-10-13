@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Operations extends Migration
+class CreateBalanceTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,14 @@ class Operations extends Migration
      */
     public function up()
     {
-        Schema::create('operations', function (Blueprint $table) {
+        Schema::create('balances', function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id")
-                  ->nullable(false)      
-                  ->constrained("users", "id")
-                  ->onUpdate("cascade")
-                  ->onDelete("null");
-            $table->foreignId("recipient_id")
                   ->nullable(false)
                   ->constrained("users", "id")
                   ->onUpdate("cascade")
-                  ->onDelete("null");
-            $table->float("op_sum")
-                  ->nullable(false);    
+                  ->onDelete("cascade");
+            $table->float("user_balance")->default(0.0);
             $table->timestamps();
         });
     }
@@ -38,6 +32,6 @@ class Operations extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('operations');
+        Schema::dropIfExists('balances');
     }
 }
