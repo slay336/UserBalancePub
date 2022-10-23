@@ -26,7 +26,9 @@ class CreateOperationTable extends Migration
                   ->onUpdate("cascade")
                   ->onDelete("set null");
             $table->float("op_sum")
-                  ->nullable(false);    
+                  ->nullable(false);
+            $table->text("description")
+                  ->nullable(true);
             $table->timestamps();
         });
     }

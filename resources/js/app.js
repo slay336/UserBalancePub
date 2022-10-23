@@ -5,6 +5,7 @@
  */
 
 require('./bootstrap');
+import Vue from 'vue';
 import router from './router';
 
 window.Vue = require('vue').default;
@@ -22,6 +23,9 @@ window.Vue = require('vue').default;
 
 //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component("v-header", require("./components/Header.vue").default);
+Vue.component("v-balance", require("./components/Balance.vue").default);
+Vue.component("v-latest-operations", require("./components/LatestOperations.vue").default);
+Vue.component("v-user-operations", require("./components/UserOperations.vue").default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
