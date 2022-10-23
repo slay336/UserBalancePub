@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OperationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +21,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post("login", [LoginController::class, "login"]);
+Route::post("/login/check", [LoginController::class, "check_logged_in"]);
+Route::post("/login", [LoginController::class, "login"]);
+Route::post("/logout", [LoginController::class, "logout"]);
+Route::post("/balance", [BalanceController::class, "show"]);
+Route::post("/operations", [OperationController::class, "show"]);

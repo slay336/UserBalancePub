@@ -10,10 +10,10 @@ class Operation extends Model
     use HasFactory;
 
     public function sender() {
-        return $this->hasOne(User::class, "user_id");
+        return $this->hasOne(User::class, "id", "user_id");
     }
 
     public function recipient() {
-        return $this->hasOne(User::class, "recipient_id");
+        return $this->hasOne(User::class, "id", "recipient_id");
     }
 }

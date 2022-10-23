@@ -5048,7 +5048,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Balance"
+  name: "Balance",
+  data: function data() {
+    return {
+      balance: 0.0,
+      refreshInterval: null
+    };
+  },
+  methods: {
+    getBalance: function getBalance() {
+      var _this = this;
+      this.$http.post("/api/balance").then(function (res) {
+        _this.balance = res.data.balance;
+      })["catch"](function (err) {
+        alert(err.message);
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.getBalance();
+    this.refreshInterval = setInterval(this.getBalance, this.$root.refreshIntervalMiliseconds);
+  },
+  beforeDestroy: function beforeDestroy() {
+    clearInterval(this.refreshInterval);
+    this.refreshInterval = null;
+  }
 });
 
 /***/ }),
@@ -5065,7 +5089,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Header"
+  name: "Header",
+  methods: {
+    logout: function logout() {
+      var _this = this;
+      axios.post("/api/logout").then(function () {
+        _this.$router.push({
+          name: "index"
+        });
+        _this.$root.isLoggedIn = false;
+      })["catch"](function (err) {
+        alert(err);
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -5085,22 +5122,29 @@ __webpack_require__.r(__webpack_exports__);
   name: "LatestOperations",
   data: function data() {
     return {
-      operations: [{
-        id: 1,
-        date: "2022-10-23 10:59:33",
-        from: "User1",
-        to: "User2",
-        sum: "123123123",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec vero alia sunt quaerenda contra Carneadeam illam sententiam. Haec para/doca illi, nos admirabilia dicamus. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Cum ageremus, inquit, vitae beatum et eundem supremum diem, scribebamus haec. In qua quid est boni praeter summam voluptatem, et eam sempiternam? Fortitudinis quaedam praecepta sunt ac paene leges, quae effeminari virum vetant in dolore. Duo Reges: constructio interrete."
-      }, {
-        id: 2,
-        date: "2022-10-22 23:56:11",
-        from: "User2",
-        to: "User1",
-        sum: "23432423234",
-        description: "Neminem videbis ita laudatum, ut artifex callidus comparandarum voluptatum diceretur. Sit ista in Graecorum levitate perversitas, qui maledictis insectantur eos, a quibus de veritate dissentiunt. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur. Et hercule-fatendum est enim, quod sentio -mirabilis est apud illos contextus rerum. Hanc ergo intuens debet institutum illud quasi signum absolvere. Ecce aliud simile dissimile."
-      }]
+      operations: [],
+      refreshInterval: null
     };
+  },
+  methods: {
+    getLatestOps: function getLatestOps() {
+      var _this = this;
+      this.$http.post("/api/operations", {
+        "last": 5
+      }).then(function (res) {
+        _this.operations = res.data;
+      })["catch"](function (err) {
+        alert(err.message);
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.getLatestOps();
+    this.refreshInterval = setInterval(this.getLatestOps, this.$root.refreshIntervalMiliseconds);
+  },
+  beforeDestroy: function beforeDestroy() {
+    clearInterval(this.refreshInterval);
+    this.refreshInterval = null;
   }
 });
 
@@ -5127,21 +5171,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   name: "UserOperations",
   data: function data() {
     return {
-      operations: [{
-        id: 1,
-        date: "2022-10-23 10:59:33",
-        from: "User1",
-        to: "User2",
-        sum: "123123123",
-        description: "lol Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec vero alia sunt quaerenda contra Carneadeam illam sententiam. Haec para/doca illi, nos admirabilia dicamus. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Cum ageremus, inquit, vitae beatum et eundem supremum diem, scribebamus haec. In qua quid est boni praeter summam voluptatem, et eam sempiternam? Fortitudinis quaedam praecepta sunt ac paene leges, quae effeminari virum vetant in dolore. Duo Reges: constructio interrete."
-      }, {
-        id: 2,
-        date: "2022-10-22 23:56:11",
-        from: "User2",
-        to: "User1",
-        sum: "23432423234",
-        description: "lol Neminem videbis ita laudatum, ut artifex callidus comparandarum voluptatum diceretur. Sit ista in Graecorum levitate perversitas, qui maledictis insectantur eos, a quibus de veritate dissentiunt. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur. Et hercule-fatendum est enim, quod sentio -mirabilis est apud illos contextus rerum. Hanc ergo intuens debet institutum illud quasi signum absolvere. Ecce aliud simile dissimile."
-      }],
+      operations: [],
       shownOperations: [],
       sortedAsc: false
     };
@@ -5166,10 +5196,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return operation.description.toLowerCase().indexOf(newValue.toLowerCase()) > -1;
         });
       }
+    },
+    getOperations: function getOperations() {
+      var _this2 = this;
+      this.$http.post("/api/operations").then(function (res) {
+        _this2.operations = res.data;
+        _this2.shownOperations = _toConsumableArray(_this2.operations);
+      })["catch"](function (err) {
+        alert(err.message);
+      });
     }
   },
   created: function created() {
-    this.shownOperations = _toConsumableArray(this.operations);
+    this.getOperations();
   },
   mounted: function mounted() {
     this.sort();
@@ -5190,7 +5229,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Index"
+  name: "Index",
+  created: function created() {
+    this.$root.checkLoggedIn();
+  }
 });
 
 /***/ }),
@@ -5206,8 +5248,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Login"
+  name: "Login",
+  data: function data() {
+    return {
+      invalidCredentials: false,
+      awaiting: false,
+      form: {
+        email: null,
+        password: null
+      }
+    };
+  },
+  methods: {
+    login: function login() {
+      var _this = this;
+      if (this.awaiting) return;
+      this.awaiting = true;
+      this.$http.post("/api/login", this.form).then(function () {
+        _this.awaiting = false;
+        _this.$router.push({
+          name: "index"
+        });
+      })["catch"](function (err) {
+        if (err.response && err.response.status == 422) {
+          _this.invalidCredentials = true;
+        } else {
+          alert(err);
+        }
+        _this.awaiting = false;
+      });
+    }
+  },
+  created: function created() {
+    this.$root.checkLoggedIn();
+  }
 });
 
 /***/ }),
@@ -5224,7 +5302,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Operations"
+  name: "Operations",
+  created: function created() {
+    this.$root.checkLoggedIn();
+  }
 });
 
 /***/ }),
@@ -5244,19 +5325,15 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _vm._m(0);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
   return _c("div", {
     staticClass: "card position-fixed top-10 end-0 me-5"
   }, [_c("div", {
     staticClass: "card-header"
   }, [_vm._v("Баланс")]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
-  }, [_vm._v("10000000.25 rub")])]);
-}];
+  }, [_vm._v(_vm._s(_vm.balance) + " rub")])]);
+};
+var staticRenderFns = [];
 render._withStripped = true;
 
 
@@ -5293,7 +5370,7 @@ var render = function render() {
     }
   }, [_c("ul", {
     staticClass: "navbar-nav"
-  }, [_c("li", {
+  }, [_vm.$root.isLoggedIn ? _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link active",
@@ -5304,9 +5381,9 @@ var render = function render() {
       "aria-current": "page",
       to: "/operations"
     }
-  }, [_vm._v("\n                        История операций\n                    ")])], 1)])]), _vm._v(" "), _c("ul", {
+  }, [_vm._v("\n                        История операций\n                    ")])], 1) : _vm._e()])]), _vm._v(" "), _c("ul", {
     staticClass: "nav nav-pills justify-content-end"
-  }, [_c("li", {
+  }, [!_vm.$root.isLoggedIn ? _c("li", {
     staticClass: "nav-item"
   }, [_c("router-link", {
     staticClass: "nav-link link-light",
@@ -5315,16 +5392,18 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fa-solid fa-right-to-bracket"
-  }), _vm._v(" Войти\n                ")])], 1), _vm._v(" "), _c("li", {
+  }), _vm._v(" Войти\n                ")])], 1) : _vm._e(), _vm._v(" "), _vm.$root.isLoggedIn ? _c("li", {
     staticClass: "nav-item"
-  }, [_c("router-link", {
+  }, [_c("button", {
     staticClass: "nav-link link-light",
-    attrs: {
-      to: "/"
+    on: {
+      click: function click($event) {
+        return _vm.logout();
+      }
     }
   }, [_c("i", {
     staticClass: "fa-solid fa-right-from-bracket"
-  }), _vm._v(" Выйти\n                ")])], 1)])], 1)]);
+  }), _vm._v(" Выйти\n                ")])]) : _vm._e()])], 1)]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -5369,13 +5448,18 @@ var render = function render() {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-10"
-  }, [_c("table", {
+  }, [_vm.operations.length > 0 ? _c("table", {
     staticClass: "table table-striped"
   }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.operations, function (operation) {
     return _c("tr", {
       key: operation.id
-    }, [_c("td", [_vm._v(_vm._s(operation.date))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.from))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.to))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
-  }), 0)])])])]);
+    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
+  }), 0)]) : _c("p", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "16px"
+    }
+  }, [_vm._v("Нет операций для просмотра")])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -5484,7 +5568,7 @@ var render = function render() {
   }, [_vm._v("Описание")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.shownOperations, function (operation) {
     return _c("tr", {
       key: operation.id
-    }, [_c("td", [_vm._v(_vm._s(operation.date))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.from))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.to))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
+    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
   }), 0)])])])]);
 };
 var staticRenderFns = [];
@@ -5510,12 +5594,22 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "container"
-  }, [_c("p", {
+  }, [!_vm.$root.isLoggedIn ? _c("p", {
+    staticClass: "text-center mt-2",
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("Для просмотра страницы, необходимо войти в систему")]) : _c("div", [_c("p", {
     staticClass: "text-center",
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("Данные пользователя TEST_USER")]), _vm._v(" "), _c("v-balance"), _vm._v(" "), _c("p", [_vm._v("Последние операции с участием пользователя:")]), _vm._v(" "), _c("v-latest-operations")], 1);
+  }, [_vm._v("Данные пользователя " + _vm._s(this.$root.currentUser.email))]), _vm._v(" "), _c("v-balance"), _vm._v(" "), _c("p", {
+    staticClass: "text-center",
+    staticStyle: {
+      "font-size": "18px"
+    }
+  }, [_vm._v("Последние операции с участием пользователя:")]), _vm._v(" "), _c("v-latest-operations")], 1)]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5538,11 +5632,6 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _vm._m(0);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
   return _c("div", {
     staticClass: "container text-center mt-3"
   }, [_c("div", {
@@ -5554,7 +5643,7 @@ var staticRenderFns = [function () {
   }, [_c("h5", {
     staticClass: "card-header"
   }, [_vm._v("\n                    Войти в систему\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "card-body"
+    staticClass: "card-body needs-validation"
   }, [_c("div", {
     staticClass: "form-outline"
   }, [_c("label", {
@@ -5563,13 +5652,33 @@ var staticRenderFns = [function () {
       "for": "email"
     }
   }, [_vm._v("Email")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.email,
+      expression: "form.email"
+    }],
     staticClass: "form-control form-control-lg",
+    "class": {
+      "is-invalid": _vm.invalidCredentials
+    },
     attrs: {
       type: "email",
       name: "email",
       id: "email"
+    },
+    domProps: {
+      value: _vm.form.email
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "email", $event.target.value);
+      }
     }
-  })]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("Некорректные данные для входа")])]), _vm._v(" "), _c("div", {
     staticClass: "form-outline"
   }, [_c("label", {
     staticClass: "form-label",
@@ -5577,16 +5686,43 @@ var staticRenderFns = [function () {
       "for": "password"
     }
   }, [_vm._v("Пароль")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.password,
+      expression: "form.password"
+    }],
     staticClass: "form-control form-control-lg",
+    "class": {
+      "is-invalid": _vm.invalidCredentials
+    },
     attrs: {
       type: "password",
       name: "password",
       id: "password"
+    },
+    domProps: {
+      value: _vm.form.password
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "password", $event.target.value);
+      }
     }
   })]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-primary mt-3 text-uppercase"
+    staticClass: "btn btn-primary mt-3 text-uppercase",
+    attrs: {
+      disabled: _vm.awaiting
+    },
+    on: {
+      click: function click($event) {
+        return _vm.login();
+      }
+    }
   }, [_vm._v("Войти")])])])])])]);
-}];
+};
+var staticRenderFns = [];
 render._withStripped = true;
 
 
@@ -5607,12 +5743,17 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("p", {
+  return _c("div", [!_vm.$root.isLoggedIn ? _c("p", {
+    staticClass: "text-center mt-2",
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("Для просмотра страницы, необходимо войти в систему")]) : _c("div", [_c("p", {
     staticClass: "text-center",
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("История операций пользователя TEST_USER")]), _vm._v(" "), _c("v-user-operations")], 1);
+  }, [_vm._v("История операций пользователя " + _vm._s(this.$root.currentUser.email))]), _vm._v(" "), _c("v-user-operations")], 1)]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5628,8 +5769,10 @@ render._withStripped = true;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -5639,7 +5782,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
+
 window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].prototype.$http = (axios__WEBPACK_IMPORTED_MODULE_1___default());
 
 /**
  * The following block of code may be used to automatically register your
@@ -5653,10 +5798,10 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-vue__WEBPACK_IMPORTED_MODULE_1__["default"].component("v-header", (__webpack_require__(/*! ./components/Header.vue */ "./resources/js/components/Header.vue")["default"]));
-vue__WEBPACK_IMPORTED_MODULE_1__["default"].component("v-balance", (__webpack_require__(/*! ./components/Balance.vue */ "./resources/js/components/Balance.vue")["default"]));
-vue__WEBPACK_IMPORTED_MODULE_1__["default"].component("v-latest-operations", (__webpack_require__(/*! ./components/LatestOperations.vue */ "./resources/js/components/LatestOperations.vue")["default"]));
-vue__WEBPACK_IMPORTED_MODULE_1__["default"].component("v-user-operations", (__webpack_require__(/*! ./components/UserOperations.vue */ "./resources/js/components/UserOperations.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].component("v-header", (__webpack_require__(/*! ./components/Header.vue */ "./resources/js/components/Header.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].component("v-balance", (__webpack_require__(/*! ./components/Balance.vue */ "./resources/js/components/Balance.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].component("v-latest-operations", (__webpack_require__(/*! ./components/LatestOperations.vue */ "./resources/js/components/LatestOperations.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_2__["default"].component("v-user-operations", (__webpack_require__(/*! ./components/UserOperations.vue */ "./resources/js/components/UserOperations.vue")["default"]));
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -5664,9 +5809,37 @@ vue__WEBPACK_IMPORTED_MODULE_1__["default"].component("v-user-operations", (__we
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-var app = new vue__WEBPACK_IMPORTED_MODULE_1__["default"]({
+var app = new vue__WEBPACK_IMPORTED_MODULE_2__["default"]({
   el: '#app',
-  router: _router__WEBPACK_IMPORTED_MODULE_0__["default"]
+  router: _router__WEBPACK_IMPORTED_MODULE_0__["default"],
+  data: function data() {
+    return {
+      isLoggedIn: false,
+      currentUser: {},
+      refreshIntervalMiliseconds: 5000
+    };
+  },
+  methods: {
+    checkLoggedIn: function checkLoggedIn() {
+      var _this = this;
+      this.$http.post("/api/login/check").then(function (res) {
+        _this.isLoggedIn = res.data.isLoggedIn == 1;
+        if (_this.isLoggedIn) {
+          _this.currentUser = {
+            email: res.data.email
+          };
+        } else {
+          _this.currentUser = {};
+        }
+      })["catch"](function (err) {
+        alert(err);
+      });
+    },
+    formatDate: function formatDate(timestamp) {
+      var date = new Date(timestamp);
+      return "".concat(date.getDate().toString().padStart(2, "0"), ".") + "".concat(date.getMonth().toString().padStart(2, "0"), ".") + "".concat(date.getFullYear(), " ") + "".concat(date.getHours().toString().padStart(2, "0"), ":") + "".concat(date.getMinutes().toString().padStart(2, "0"), ":") + "".concat(date.getSeconds().toString().padStart(2, "0"));
+    }
+  }
 });
 
 /***/ }),
@@ -5690,6 +5863,7 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.withCredentials = true;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -5734,13 +5908,16 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_3__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_4__["default"]);
 var routes = [{
   path: "/",
-  component: _views_Index__WEBPACK_IMPORTED_MODULE_0__["default"]
+  component: _views_Index__WEBPACK_IMPORTED_MODULE_0__["default"],
+  name: "index"
 }, {
   path: "/operations",
-  component: _views_Operations__WEBPACK_IMPORTED_MODULE_1__["default"]
+  component: _views_Operations__WEBPACK_IMPORTED_MODULE_1__["default"],
+  name: "operations"
 }, {
   path: "/login",
-  component: _views_Login__WEBPACK_IMPORTED_MODULE_2__["default"]
+  component: _views_Login__WEBPACK_IMPORTED_MODULE_2__["default"],
+  name: "login"
 }];
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vue_router__WEBPACK_IMPORTED_MODULE_4__["default"]({
   mode: "history",
@@ -44189,6 +44366,18 @@ Vue.compile = compileToFunctions;
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

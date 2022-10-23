@@ -30,12 +30,12 @@ class DatabaseSeeder extends Seeder
         Operation::factory(5)->create([
             "user_id" => $sender->id,
             "recipient_id" => $recipient->id,
-            "description" => file_get_contents('http://loripsum.net/api')
+            "description" => "Какое-то описание"
         ]);
         Operation::factory(12)->create([
             "user_id" => $recipient->id,
             "recipient_id" => $sender->id,
-            "description" => file_get_contents('http://loripsum.net/api')
+            "description" => "Какое-то другое описание"
         ]);
     }
 }

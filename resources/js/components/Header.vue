@@ -10,7 +10,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="$root.isLoggedIn">
                         <router-link class="nav-link active" style="font-size: 18px" aria-current="page" to="/operations">
                             История операций
                         </router-link>
@@ -18,15 +18,15 @@
                 </ul>
             </div>
             <ul class="nav nav-pills justify-content-end">
-                <li class="nav-item">
+                <li class="nav-item" v-if="!$root.isLoggedIn">
                     <router-link class="nav-link link-light" to="/login">
                         <i class="fa-solid fa-right-to-bracket"></i> Войти
                     </router-link>
                 </li>
-                <li class="nav-item">
-                    <router-link class="nav-link link-light" to="/">
+                <li class="nav-item" v-if="$root.isLoggedIn">
+                    <button class="nav-link link-light" @click="logout();">
                         <i class="fa-solid fa-right-from-bracket"></i> Выйти
-                    </router-link>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -34,7 +34,20 @@
 </template>
 
 <script>
+
     export default {
-        name: "Header"
+        name: "Header",
+        methods: {
+            logout: function() {
+                axios.post("/api/logout")
+                    .then(() => {
+                        this.$router.push({ name: "index" });
+                        this.$root.isLoggedIn = false;
+                    })
+                    .catch(err => {
+                        alert(err);
+                    })
+            }
+        }
     }
 </script>

@@ -7,8 +7,10 @@
 require('./bootstrap');
 import Vue from 'vue';
 import router from './router';
+import axios from 'axios';
 
 window.Vue = require('vue').default;
+Vue.prototype.$http = axios;
 
 /**
  * The following block of code may be used to automatically register your
@@ -35,5 +37,39 @@ Vue.component("v-user-operations", require("./components/UserOperations.vue").de
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    data() {
+        return {
+            isLoggedIn: false,
+            currentUser: {},
+            refreshIntervalMiliseconds: 5000
+        };
+    },
+    methods: {
+        checkLoggedIn: function() {
+            this.$http.post("/api/login/check")
+                .then(res => {
+                    this.isLoggedIn = res.data.isLoggedIn == 1;
+                    if(this.isLoggedIn) {
+                        this.currentUser = {
+                            email: res.data.email
+                        };
+                    } else {
+                        this.currentUser = {};
+                    }
+                })
+                .catch(err => {
+                    alert(err);
+                })
+        },
+        formatDate: function(timestamp) {
+            const date = new Date(timestamp);
+            return `${date.getDate().toString().padStart(2, "0")}.` +
+                   `${date.getMonth().toString().padStart(2, "0")}.` +
+                   `${date.getFullYear()} ` +
+                   `${date.getHours().toString().padStart(2, "0")}:` +
+                   `${date.getMinutes().toString().padStart(2, "0")}:` +
+                   `${date.getSeconds().toString().padStart(2, "0")}`;
+        }
+    }
 });

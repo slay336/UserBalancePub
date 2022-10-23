@@ -7,9 +7,9 @@ import Login from "./views/Login";
 Vue.use(vueRouter);
 
 const routes = [
-    {path: "/", component: Index},
-    {path: "/operations", component: Operations},
-    {path: "/login", component: Login}
+    {path: "/", component: Index, name: "index"},
+    {path: "/operations", component: Operations, name: "operations"},
+    {path: "/login", component: Login, name: "login"}
 ];
 
 export default new vueRouter({
