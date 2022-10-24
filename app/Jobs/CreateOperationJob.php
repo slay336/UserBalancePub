@@ -42,7 +42,7 @@ class CreateOperationJob implements ShouldQueue
             "user_id" => $this->sender->id,
             "recipient_id" => $this->recipient->id,
             "op_sum" => $this->sum,
-            "description" => $this->desription ?? ""
+            "description" => $this->description ?? ""
         ]);
     }
 }
