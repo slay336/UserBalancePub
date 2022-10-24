@@ -23,6 +23,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("/login/check", [LoginController::class, "check_logged_in"]);
 Route::post("/login", [LoginController::class, "login"]);
-Route::post("/logout", [LoginController::class, "logout"]);
-Route::post("/balance", [BalanceController::class, "show"]);
-Route::post("/operations", [OperationController::class, "show"]);
+Route::middleware("auth:sanctum")->post("/logout", [LoginController::class, "logout"]);
+Route::middleware("auth:sanctum")->post("/balance", [BalanceController::class, "show"]);
+Route::middleware("auth:sanctum")->post("/operations", [OperationController::class, "show"]);
