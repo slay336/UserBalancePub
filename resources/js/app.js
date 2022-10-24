@@ -52,7 +52,7 @@ const app = new Vue({
                     this.isLoggedIn = res.data.isLoggedIn == 1;
                     if(this.isLoggedIn) {
                         this.currentUser = {
-                            email: res.data.email
+                            name: res.data.user
                         };
                     } else {
                         this.currentUser = {};

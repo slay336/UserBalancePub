@@ -5173,7 +5173,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     return {
       operations: [],
       shownOperations: [],
-      sortedAsc: false
+      sortedAsc: true
     };
   },
   methods: {
@@ -5181,13 +5181,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var _this = this;
       this.sortedAsc = !this.sortedAsc;
       this.shownOperations = this.shownOperations.sort(function (a, b) {
-        if (a.date !== b.date) {
-          return b.date > a.date === _this.sortedAsc ? -1 : 1;
+        if (a.created_at !== b.created_at) {
+          return b.created_at > a.created_at === _this.sortedAsc ? -1 : 1;
         } else return 0;
       });
     },
     search: function search(event) {
-      alert("hello");
       var newValue = event.target.value;
       if (!newValue) {
         this.shownOperations = _toConsumableArray(this.operations);
@@ -5202,16 +5201,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.$http.post("/api/operations").then(function (res) {
         _this2.operations = res.data;
         _this2.shownOperations = _toConsumableArray(_this2.operations);
+        _this2.sort();
       })["catch"](function (err) {
         alert(err.message);
       });
     }
   },
-  created: function created() {
-    this.getOperations();
-  },
   mounted: function mounted() {
-    this.sort();
+    this.getOperations();
   }
 });
 
@@ -5331,7 +5328,7 @@ var render = function render() {
     staticClass: "card-header"
   }, [_vm._v("Баланс")]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
-  }, [_vm._v(_vm._s(_vm.balance) + " rub")])]);
+  }, [_vm._v(_vm._s(_vm.balance) + " $")])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5453,7 +5450,7 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.operations, function (operation) {
     return _c("tr", {
       key: operation.id
-    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
+    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " $")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
   }), 0)]) : _c("p", {
     staticClass: "text-center",
     staticStyle: {
@@ -5568,7 +5565,7 @@ var render = function render() {
   }, [_vm._v("Описание")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.shownOperations, function (operation) {
     return _c("tr", {
       key: operation.id
-    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " rub")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
+    }, [_c("td", [_vm._v(_vm._s(_vm.$root.formatDate(Date.parse(operation.created_at))))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sender))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.recipient))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.sum) + " $")]), _vm._v(" "), _c("td", [_vm._v(_vm._s(operation.description))])]);
   }), 0)])])])]);
 };
 var staticRenderFns = [];
@@ -5604,7 +5601,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("Данные пользователя " + _vm._s(this.$root.currentUser.email))]), _vm._v(" "), _c("v-balance"), _vm._v(" "), _c("p", {
+  }, [_vm._v("Данные пользователя " + _vm._s(this.$root.currentUser.name))]), _vm._v(" "), _c("v-balance"), _vm._v(" "), _c("p", {
     staticClass: "text-center",
     staticStyle: {
       "font-size": "18px"
@@ -5753,7 +5750,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("История операций пользователя " + _vm._s(this.$root.currentUser.email))]), _vm._v(" "), _c("v-user-operations")], 1)]);
+  }, [_vm._v("История операций пользователя " + _vm._s(this.$root.currentUser.name))]), _vm._v(" "), _c("v-user-operations")], 1)]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5826,7 +5823,7 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_2__["default"]({
         _this.isLoggedIn = res.data.isLoggedIn == 1;
         if (_this.isLoggedIn) {
           _this.currentUser = {
-            email: res.data.email
+            name: res.data.user
           };
         } else {
           _this.currentUser = {};

@@ -17,7 +17,7 @@
                             <td>{{ $root.formatDate(Date.parse(operation.created_at)) }}</td>
                             <td>{{ operation.sender }}</td>
                             <td>{{ operation.recipient }}</td>
-                            <td>{{ operation.sum }} rub</td>
+                            <td>{{ operation.sum }} $</td>
                             <td>{{ operation.description }}</td>
                         </tr>
                     </tbody>

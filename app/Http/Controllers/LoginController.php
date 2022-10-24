@@ -23,12 +23,12 @@ class LoginController extends Controller
 
     public function check_logged_in(Request $request) {
         $is_logged_in = 0;
-        $email = "";
+        $username = "";
         if($request->user()) {
             $is_logged_in = 1;
-            $email = $request->user()->email;
+            $username = $request->user()->name;
         }
-        return response()->json(["isLoggedIn" => $is_logged_in, "email" => $email]);
+        return response()->json(["isLoggedIn" => $is_logged_in, "user" => $username]);
     }
 
     public function logout() {

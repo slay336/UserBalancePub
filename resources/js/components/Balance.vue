@@ -1,7 +1,7 @@
 <template>
     <div class="card position-fixed top-10 end-0 me-5">
         <div class="card-header">Баланс</div>
-        <div class="card-body">{{ balance }} rub</div>
+        <div class="card-body">{{ balance }} $</div>
     </div>
 </template>
 

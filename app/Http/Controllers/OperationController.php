@@ -22,8 +22,8 @@ class OperationController extends Controller
         foreach($operations as $operation) {
             array_push($result, [
                 "created_at" => $operation->created_at,
-                "sender" => $operation->sender()->get("email")->first()["email"],
-                "recipient" => $operation->recipient()->get("email")->first()["email"],
+                "sender" => $operation->sender()->get("name")->first()["name"],
+                "recipient" => $operation->recipient()->get("name")->first()["name"],
                 "sum" => $operation->op_sum,
                 "description" => $operation->description
             ]);

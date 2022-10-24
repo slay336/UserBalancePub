@@ -26,7 +26,7 @@
                             <td>{{ $root.formatDate(Date.parse(operation.created_at)) }}</td>
                             <td>{{ operation.sender }}</td>
                             <td>{{ operation.recipient }}</td>
-                            <td>{{ operation.sum }} rub</td>
+                            <td>{{ operation.sum }} $</td>
                             <td>{{ operation.description }}</td>
                         </tr>
                     </tbody>
@@ -43,20 +43,19 @@
             return {
                 operations: [],
                 shownOperations: [],
-                sortedAsc: false
+                sortedAsc: true
             }
         },
         methods: {
             sort: function() {
                 this.sortedAsc = !this.sortedAsc;
                 this.shownOperations = this.shownOperations.sort((a, b) => {
-                    if (a.date !== b.date) {
-                        return b.date > a.date === this.sortedAsc ? -1 : 1;
+                    if (a.created_at !== b.created_at) {
+                        return b.created_at > a.created_at === this.sortedAsc ? -1 : 1;
                     } else return 0;
                 });
             },
             search: function(event) {
-                alert("hello")
                 let newValue = event.target.value;
                 if (!newValue) {
                     this.shownOperations = [...this.operations];
@@ -69,17 +68,15 @@
                     .then(res => {
                         this.operations = res.data;
                         this.shownOperations = [...this.operations];
+                        this.sort();
                     })
                     .catch(err => {
                         alert(err.message);
                     })
             }
         },
-        created: function() {
-            this.getOperations();
-        },
         mounted: function() {
-            this.sort();
+            this.getOperations();
         }
     }
 </script>

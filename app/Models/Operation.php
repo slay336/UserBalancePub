@@ -9,6 +9,10 @@ class Operation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "user_id", "recipient_id", "op_sum", "description"
+    ];
+
     public function sender() {
         return $this->hasOne(User::class, "id", "user_id");
     }
